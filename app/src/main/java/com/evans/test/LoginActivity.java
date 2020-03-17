@@ -58,9 +58,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void proceedWithLogin(String email, String password) {
-        User user = new User("TestName", "TestName", password, email, "super_user");
         Intent toHomePage = new Intent(this, HomeActivity.class);
-        toHomePage.putExtra("user", user)
+//        toHomePage.putExtra("user", user)
 ;        startActivity(toHomePage);
         finish();
     }
