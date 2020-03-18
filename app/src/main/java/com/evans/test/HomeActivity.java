@@ -1,6 +1,7 @@
 package com.evans.test;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -11,21 +12,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private NavController mNavController;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
-        mNavController = Navigation.findNavController(this, R.id.fragment);
-        NavigationUI.setupWithNavController(bottomNav,mNavController);
+        NavController navController = Navigation.findNavController(this, R.id.fragment);
+        NavigationUI.setupWithNavController(bottomNav, navController);
 
-        initViews();
-    }
-
-    private void initViews() {
-
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            int destId = destination.getId();
+            if (destId == R.id.postFragment || destId == R.id.searchFragment){
+                bottomNav.setVisibility(View.GONE);
+            } else {
+                bottomNav.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

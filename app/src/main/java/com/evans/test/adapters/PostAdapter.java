@@ -5,9 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,6 +50,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         ImageView postImage;
         TextView likes, comments, caption;
         PostItemListener mPostItemListener;
+        CardView postItem;
 
         PostHolder(@NonNull View itemView, PostItemListener postItemListener) {
             super(itemView);
@@ -58,8 +59,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             likes = itemView.findViewById(R.id.likes);
             comments = itemView.findViewById(R.id.comments);
             caption = itemView.findViewById(R.id.postCaption);
+            postItem = itemView.findViewById(R.id.postItem);
 
-            itemView.setOnClickListener(this);
+            likes.setOnClickListener(this);
+            comments.setOnClickListener(this);
+            caption.setOnClickListener(this);
+            postItem.setOnClickListener(this);
         }
 
         void bind(Post post) {

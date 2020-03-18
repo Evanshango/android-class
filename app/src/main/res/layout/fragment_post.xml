@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.PostFragment">
 
-    <TextView
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/postFragmentsViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Post Fragment"
-        android:textSize="22sp"
-        android:gravity="center"/>
+        android:layout_above="@id/postTabLayout"/>
 
-</FrameLayout>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/postTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabIndicatorColor="@color/tabIndicator"
+        app:tabIndicatorHeight="2dp"
+        app:tabBackground="@color/colorWhite"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
