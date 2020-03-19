@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.PhotoFragment">
+    tools:context=".fragments.PhotoFragment"
+    android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="PHOTO FRAGMENT"
-        android:gravity="center"/>
+        android:orientation="vertical"
+        android:weightSum="100">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/imagePlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="60"
+            android:background="@drawable/ic_camera"
+            android:layout_margin="4dp"
+            android:scaleType="centerCrop"/>
+
+        <EditText
+            android:id="@+id/postCaption"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:layout_weight="20"
+            android:background="@drawable/edit_text_layout"
+            android:hint="Enter Some Post Caption..."
+            android:padding="10dp"
+            android:gravity="top"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/uploadPost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Post"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"/>
+
+</RelativeLayout>

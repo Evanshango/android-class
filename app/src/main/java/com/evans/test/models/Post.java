@@ -5,19 +5,22 @@ import android.os.Parcelable;
 
 public class Post implements Parcelable {
 
-    private String postId, postImage, postCaption, likes, comments, date;
+    private String postId, postImage, postCaption, likes, comments, date, time, username, userId;
 
     public Post() {
     }
 
     public Post(String postId, String postImage, String postCaption, String likes, String comments,
-                String date) {
+                String date, String time, String username, String userId) {
         this.postId = postId;
         this.postImage = postImage;
         this.postCaption = postCaption;
         this.likes = likes;
         this.comments = comments;
         this.date = date;
+        this.time = time;
+        this.username = username;
+        this.userId = userId;
     }
 
     protected Post(Parcel in) {
@@ -27,6 +30,27 @@ public class Post implements Parcelable {
         likes = in.readString();
         comments = in.readString();
         date = in.readString();
+        time = in.readString();
+        username = in.readString();
+        userId = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(postId);
+        dest.writeString(postImage);
+        dest.writeString(postCaption);
+        dest.writeString(likes);
+        dest.writeString(comments);
+        dest.writeString(date);
+        dest.writeString(time);
+        dest.writeString(username);
+        dest.writeString(userId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -89,18 +113,27 @@ public class Post implements Parcelable {
         this.date = date;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getTime() {
+        return time;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(postId);
-        dest.writeString(postImage);
-        dest.writeString(postCaption);
-        dest.writeString(likes);
-        dest.writeString(comments);
-        dest.writeString(date);
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

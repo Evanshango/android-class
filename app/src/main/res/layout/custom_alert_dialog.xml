@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Please Confirm"
+        android:textAllCaps="true"
+        android:textAlignment="center"
+        android:padding="16dp"
+        android:textColor="@color/colorRed"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAlignment="center"
+        android:text="You are about to upload an image. Press Proceed to continue or Cancel to stop the process"/>
+
+<ProgressBar
+    android:id="@+id/uploadProgress"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:visibility="gone"
+    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+    android:theme="@style/AppTheme.WhiteAccent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id="@+id/txtCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/colorRed"/>
+
+        <TextView
+            android:id="@+id/txtProceed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Proceed"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
