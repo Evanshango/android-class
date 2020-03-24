@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.evans.test.R;
+import com.evans.test.models.LikePost;
 import com.evans.test.models.Post;
 
 import java.util.List;
@@ -47,10 +48,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
     class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView postImage;
-        TextView likes, comments, caption;
+        ImageView postImage, favBorder;
+        TextView likes, comments, caption, savePost;
         PostItemListener mPostItemListener;
-        CardView postItem;
 
         PostHolder(@NonNull View itemView, PostItemListener postItemListener) {
             super(itemView);
@@ -59,18 +59,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             likes = itemView.findViewById(R.id.likes);
             comments = itemView.findViewById(R.id.comments);
             caption = itemView.findViewById(R.id.postCaption);
-            postItem = itemView.findViewById(R.id.postItem);
+            savePost = itemView.findViewById(R.id.savePost);
+            favBorder = itemView.findViewById(R.id.favBorder);
 
             likes.setOnClickListener(this);
             comments.setOnClickListener(this);
             caption.setOnClickListener(this);
-            postItem.setOnClickListener(this);
+            savePost.setOnClickListener(this);
         }
 
         void bind(Post post) {
             caption.setText(post.getPostCaption());
-            likes.setText(String.format("%s likes", post.getLikes()));
-            comments.setText(String.format("%s comments", post.getComments()));
+            likes.setText(String.format("%s likes", post.getLikes().size()));
+            comments.setText(String.format("%s comments", post.getComments().size()));
 
             Glide.with(itemView.getContext()).load(post.getPostImage()).into(postImage);
         }

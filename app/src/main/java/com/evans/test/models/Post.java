@@ -3,36 +3,37 @@ package com.evans.test.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 public class Post implements Parcelable {
 
-    private String postId, postImage, postCaption, likes, comments, date, time, username, userId;
+    private String postId, postImage, postCaption, date, time;
+    private List<LikePost> mLikes;
+    private List<Comment> mComments;
+    private User mUser;
 
     public Post() {
     }
 
-    public Post(String postId, String postImage, String postCaption, String likes, String comments,
-                String date, String time, String username, String userId) {
+    public Post(String postId, String postImage, String postCaption, String date, String time,
+                List<LikePost> likes, List<Comment> comments, User user) {
         this.postId = postId;
         this.postImage = postImage;
         this.postCaption = postCaption;
-        this.likes = likes;
-        this.comments = comments;
         this.date = date;
         this.time = time;
-        this.username = username;
-        this.userId = userId;
+        mLikes = likes;
+        mComments = comments;
+        mUser = user;
     }
 
     protected Post(Parcel in) {
         postId = in.readString();
         postImage = in.readString();
         postCaption = in.readString();
-        likes = in.readString();
-        comments = in.readString();
         date = in.readString();
         time = in.readString();
-        username = in.readString();
-        userId = in.readString();
+        mUser = in.readParcelable(User.class.getClassLoader());
     }
 
     @Override
@@ -40,12 +41,9 @@ public class Post implements Parcelable {
         dest.writeString(postId);
         dest.writeString(postImage);
         dest.writeString(postCaption);
-        dest.writeString(likes);
-        dest.writeString(comments);
         dest.writeString(date);
         dest.writeString(time);
-        dest.writeString(username);
-        dest.writeString(userId);
+        dest.writeParcelable(mUser, flags);
     }
 
     @Override
@@ -89,22 +87,6 @@ public class Post implements Parcelable {
         this.postCaption = postCaption;
     }
 
-    public String getLikes() {
-        return likes;
-    }
-
-    public void setLikes(String likes) {
-        this.likes = likes;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
     public String getDate() {
         return date;
     }
@@ -121,19 +103,27 @@ public class Post implements Parcelable {
         this.time = time;
     }
 
-    public String getUsername() {
-        return username;
+    public List<LikePost> getLikes() {
+        return mLikes;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLikes(List<LikePost> likes) {
+        mLikes = likes;
     }
 
-    public String getUserId() {
-        return userId;
+    public List<Comment> getComments() {
+        return mComments;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setComments(List<Comment> comments) {
+        mComments = comments;
+    }
+
+    public User getUser() {
+        return mUser;
+    }
+
+    public void setUser(User user) {
+        mUser = user;
     }
 }

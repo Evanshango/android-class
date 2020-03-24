@@ -9,6 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +25,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.evans.test.HomeActivity;
 import com.evans.test.R;
 import com.evans.test.models.Post;
+import com.evans.test.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -44,6 +48,7 @@ import static com.evans.test.constants.Helpers.LONG_DATE;
 import static com.evans.test.constants.Helpers.POSTS_REF;
 import static com.evans.test.constants.Helpers.TIME;
 import static com.evans.test.constants.Helpers.UPLOADS;
+import static com.evans.test.constants.Helpers.USERS_REF;
 
 public class PhotoFragment extends Fragment {
 
@@ -53,8 +58,10 @@ public class PhotoFragment extends Fragment {
     private EditText postCaption;
     private Uri imageUri;
     private StorageReference mStorageReference;
-    private CollectionReference postsRef;
+    private CollectionReference postsRef, usersRef;
     private String userId, postId, date, time, imageUrl, username;
+    private NavController mNavController;
+    private User mUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,10 +74,12 @@ public class PhotoFragment extends Fragment {
         mStorageReference = FirebaseStorage.getInstance().getReference(UPLOADS);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         postsRef = database.collection(POSTS_REF);
+        usersRef = database.collection(USERS_REF);
         postId = postsRef.document().getId();
 
         userId = user != null ? user.getUid() : "";
-        username = user != null ? user.getDisplayName() : "";
+
+        fetchCurrentUserDetails();
 
         date = new SimpleDateFormat(LONG_DATE, Locale.getDefault()).format(new Date());
         time = new SimpleDateFormat(TIME, Locale.getDefault()).format(new Date());
@@ -79,9 +88,16 @@ public class PhotoFragment extends Fragment {
         return view;
     }
 
+    private void fetchCurrentUserDetails() {
+        usersRef.document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            mUser = documentSnapshot.toObject(User.class);
+        });
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mNavController = Navigation.findNavController(view);
         btnUpload.setOnClickListener(v -> uploadPost());
         postImg.setOnClickListener(v -> openGallery());
     }
@@ -95,9 +111,14 @@ public class PhotoFragment extends Fragment {
 
     private void uploadPost() {
         String caption = postCaption.getText().toString().trim();
-        Post post = new Post(postId, imageUrl, caption, "0", "0", date, time, "" , userId);
+        Post post = new Post(postId, imageUrl, caption, date, time, null, null, mUser);
         postsRef.document(postId).set(post).addOnCompleteListener(task -> {
-            // TODO: 3/19/2020 To be Continued
+            if (task.isSuccessful()){
+                mNavController.navigate(R.id.action_photoFragment_to_homeFragment);
+                Toast.makeText(getContext(), "Post Added", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Unable to add post", Toast.LENGTH_SHORT).show();
+            }
         }).addOnFailureListener(e ->
                 Toast.makeText(getContext(), "Unable to add a post", Toast.LENGTH_SHORT).show());
     }

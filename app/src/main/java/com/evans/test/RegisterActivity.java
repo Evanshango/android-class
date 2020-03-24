@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
                 try {
                     if (task.isSuccessful()){
                         Toast.makeText(this, "Account created", Toast.LENGTH_SHORT).show();
-                        navigateToHome(user);
+                        navigateToHome();
                     }
                 } catch (Exception ex){
                     Log.d(TAG, "saveUserInfo: " + ex);
@@ -98,9 +98,8 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void navigateToHome(User user) {
+    private void navigateToHome() {
         Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra("user", user);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
