@@ -9,7 +9,11 @@
         android:id="@+id/homeFragment"
         android:name="com.evans.test.fragments.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.evans.test.fragments.SearchFragment"
@@ -29,14 +33,13 @@
         android:id="@+id/profileFragment"
         android:name="com.evans.test.fragments.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <argument android:name="user"
+            app:argType="com.evans.test.models.User"/>
+    </fragment>
     <fragment
         android:id="@+id/photoFragment"
         android:name="com.evans.test.fragments.PhotoFragment"
         android:label="fragment_photo"
-        tools:layout="@layout/fragment_photo" >
-        <action
-            android:id="@+id/action_photoFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_photo" />
 </navigation>

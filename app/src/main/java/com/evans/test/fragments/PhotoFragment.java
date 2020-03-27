@@ -56,12 +56,11 @@ public class PhotoFragment extends Fragment {
     private Button btnUpload;
     private ImageView postImg;
     private EditText postCaption;
-    private Uri imageUri;
     private StorageReference mStorageReference;
     private CollectionReference postsRef, usersRef;
     private String userId, postId, date, time, imageUrl, username;
-    private NavController mNavController;
     private User mUser;
+    private ProgressBar uploadProgress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,6 +77,7 @@ public class PhotoFragment extends Fragment {
         postId = postsRef.document().getId();
 
         userId = user != null ? user.getUid() : "";
+        username = mUser != null ? mUser.getUserName() : "anonymous";
 
         fetchCurrentUserDetails();
 
@@ -97,7 +97,6 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mNavController = Navigation.findNavController(view);
         btnUpload.setOnClickListener(v -> uploadPost());
         postImg.setOnClickListener(v -> openGallery());
     }
@@ -111,11 +110,11 @@ public class PhotoFragment extends Fragment {
 
     private void uploadPost() {
         String caption = postCaption.getText().toString().trim();
-        Post post = new Post(postId, imageUrl, caption, date, time, null, null, mUser);
+        Post post = new Post(postId, imageUrl, caption, date, time, username, null, null);
         postsRef.document(postId).set(post).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-                mNavController.navigate(R.id.action_photoFragment_to_homeFragment);
                 Toast.makeText(getContext(), "Post Added", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getContext(), HomeActivity.class));
             } else {
                 Toast.makeText(getContext(), "Unable to add post", Toast.LENGTH_SHORT).show();
             }
@@ -127,37 +126,37 @@ public class PhotoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null){
-            imageUri = data.getData();
+            Uri imageUri = data.getData();
             postImg.setImageURI(imageUri);
-            openConfirmDialog();
+            uploadImage(imageUri);
         } else {
             postImg.setImageURI(null);
         }
     }
 
-    private void openConfirmDialog() {
-        Dialog dialog = new Dialog(getContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.custom_alert_dialog);
-        initDialogViews(dialog);
-        dialog.show();
-    }
+//    private void openConfirmDialog() {
+//        Dialog dialog = new Dialog(getContext());
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(R.layout.custom_alert_dialog);
+////        initDialogViews(dialog);
+//        dialog.show();
+//    }
 
-    private void initDialogViews(Dialog dialog) {
-        TextView cancel = dialog.findViewById(R.id.txtCancel);
-        TextView proceed = dialog.findViewById(R.id.txtProceed);
-        ProgressBar uploadProgress = dialog.findViewById(R.id.uploadProgress);
+//    private void initDialogViews(Dialog dialog) {
+//        TextView cancel = dialog.findViewById(R.id.txtCancel);
+//        TextView proceed = dialog.findViewById(R.id.txtProceed);
+//        ProgressBar uploadProgress = dialog.findViewById(R.id.uploadProgress);
+//
+//        cancel.setOnClickListener(v -> {
+//            imageUri = null;
+//            postImg.setImageURI(null);
+//            dialog.dismiss();
+//        });
+//
+//        proceed.setOnClickListener(v -> uploadImage(dialog, uploadProgress));
+//    }
 
-        cancel.setOnClickListener(v -> {
-            imageUri = null;
-            postImg.setImageURI(null);
-            dialog.dismiss();
-        });
-
-        proceed.setOnClickListener(v -> uploadImage(dialog, uploadProgress));
-    }
-
-    private void uploadImage(Dialog dialog, ProgressBar uploadProgress) {
+    private void uploadImage(Uri imageUri) {
         uploadProgress.setVisibility(View.VISIBLE);
         if (imageUri != null){
             StorageReference fileRef = mStorageReference.child(postId)
@@ -171,24 +170,20 @@ public class PhotoFragment extends Fragment {
                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         imageUrl = uri.toString();
                         uploadProgress.setVisibility(View.GONE);
-                        dialog.dismiss();
                     });
                 } else {
                     uploadProgress.setVisibility(View.GONE);
-                    dialog.dismiss();
                     String errMsg = task.getException().getMessage();
                     Toast.makeText(getContext(), "Please try again", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "uploadImage: ERROR " + errMsg);
                 }
             }).addOnFailureListener(e -> {
                 uploadProgress.setVisibility(View.GONE);
-                dialog.dismiss();
                 Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
             });
         } else {
             uploadProgress.setVisibility(View.GONE);
             Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
         }
     }
 
@@ -200,7 +195,8 @@ public class PhotoFragment extends Fragment {
 
     private void initViews(View view){
         btnUpload = view.findViewById(R.id.uploadPost);
-        postImg = view.findViewById(R.id.postImage);
+        postImg = view.findViewById(R.id.imagePlaceholder);
         postCaption = view.findViewById(R.id.postCaption);
+        uploadProgress = view.findViewById(R.id.uploadProgress);
     }
 }

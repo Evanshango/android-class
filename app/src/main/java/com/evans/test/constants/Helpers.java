@@ -9,6 +9,8 @@ public class Helpers {
     public static final String LIKES_REF = "likes";
     public static final String POST_ID = "postId";
     public static final String SAVED_POST_REF = "savedPosts";
+    public static final String USER_NAME = "userName";
+    public static final String REPORT_POST = "reportedPosts";
     public static final String USER_ID = "userId";
     public static final String LONG_DATE = "dd MMM yyyy";
     public static final String TIME = "HH:mm";

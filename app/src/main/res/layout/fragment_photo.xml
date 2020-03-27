@@ -20,6 +20,14 @@
             android:background="@drawable/ic_camera"
             android:layout_margin="4dp"
             android:scaleType="centerCrop"/>
+        <ProgressBar
+            android:id="@+id/uploadProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:visibility="gone"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:theme="@style/AppTheme.WhiteAccent"/>
 
         <EditText
             android:id="@+id/postCaption"

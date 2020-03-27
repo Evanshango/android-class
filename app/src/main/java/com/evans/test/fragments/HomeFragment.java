@@ -1,5 +1,6 @@
 package com.evans.test.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,13 +10,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.test.CommentActivity;
 import com.evans.test.R;
 import com.evans.test.adapters.PostAdapter;
+import com.evans.test.dialogs.PostActionDialog;
 import com.evans.test.models.LikePost;
 import com.evans.test.models.Post;
 import com.evans.test.models.SavedPost;
@@ -39,8 +46,10 @@ import static com.evans.test.constants.Helpers.POST_ID;
 import static com.evans.test.constants.Helpers.SAVED_POST_REF;
 import static com.evans.test.constants.Helpers.USERS_REF;
 import static com.evans.test.constants.Helpers.USER_ID;
+import static com.evans.test.constants.Helpers.USER_NAME;
 
-public class HomeFragment extends Fragment implements PostAdapter.PostItemListener {
+public class HomeFragment extends Fragment implements PostAdapter.PostItemListener,
+        PostActionDialog.ReportListener {
 
     private static final String TAG = "HomeFragment";
     private RecyclerView postsRecycler;
@@ -49,6 +58,7 @@ public class HomeFragment extends Fragment implements PostAdapter.PostItemListen
     private CollectionReference postsRef, usersRef, likesRef, savedPostsRef;
     private String userId, username, likeId, savedPostId;
     private int likesCount;
+    private NavController mNavController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,11 +81,20 @@ public class HomeFragment extends Fragment implements PostAdapter.PostItemListen
 
         loadPosts();
 
-        loadCurrentUser();
+        if (!userId.equals(""))
+            loadCurrentUser();
+        else
+            Log.d(TAG, "onCreateView: User not Logged in");
 
         mPostAdapter = new PostAdapter(mPosts, this);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mNavController = Navigation.findNavController(view);
     }
 
     private void loadCurrentUser() {
@@ -116,7 +135,37 @@ public class HomeFragment extends Fragment implements PostAdapter.PostItemListen
             case R.id.postCaption:
                 Toast.makeText(getContext(), "caption clicked", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.moreImg:
+                showMoreOptions(post);
+                break;
+            case R.id.authorName:
+                navigateToUserProfile(post);
+                break;
         }
+    }
+
+    private void navigateToUserProfile(Post post) {
+        Query query = usersRef.whereEqualTo(USER_NAME, post.getAuthor()).limit(1);
+        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                User user = snapshot.toObject(User.class);
+                toProfile(user);
+            }
+        });
+    }
+
+    private void toProfile(User user) {
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        mNavController.navigate(R.id.action_homeFragment_to_profileFragment, args);
+    }
+
+    private void showMoreOptions(Post post) {
+        PostActionDialog postActionDialog = new PostActionDialog();
+        Bundle args = new Bundle();
+        args.putParcelable("post", post);
+        postActionDialog.setArguments(args);
+        postActionDialog.show(getParentFragmentManager(), "postActionDialog");
     }
 
     private void bookMarkPost(Post post, View view) {
@@ -165,7 +214,7 @@ public class HomeFragment extends Fragment implements PostAdapter.PostItemListen
                 .whereEqualTo(USER_ID, userId).limit(1);
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (queryDocumentSnapshots != null) {
-                for (QueryDocumentSnapshot snapshot: queryDocumentSnapshots){
+                for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
                     LikePost likePost = snapshot.toObject(LikePost.class);
                     undoLike(likePost, view);
                 }
@@ -206,5 +255,12 @@ public class HomeFragment extends Fragment implements PostAdapter.PostItemListen
         Map<String, Object> likeMap = new HashMap<>();
         likeMap.put("likes", String.valueOf(likesCount));
         postsRef.document(postId).set(likeMap, SetOptions.merge());
+    }
+
+    @Override
+    public void reportFeedback(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(message).setPositiveButton("Ok", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

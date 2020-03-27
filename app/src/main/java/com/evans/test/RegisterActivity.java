@@ -32,7 +32,6 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mRegister;
     private TextView txtLogin;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore;
     private CollectionReference colRef;
 
     @Override
@@ -41,8 +40,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
-        colRef = mFirestore.collection(USERS_REF);
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        colRef = firestore.collection(USERS_REF);
 
         initViews();
         txtLogin.setOnClickListener(v -> navigateToLogin());

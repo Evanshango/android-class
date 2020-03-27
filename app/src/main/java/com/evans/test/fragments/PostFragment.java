@@ -34,8 +34,8 @@ public class PostFragment extends Fragment {
     private void initializeUIComponents() {
         MediaPagerAdapter pagerAdapter = new MediaPagerAdapter(getChildFragmentManager(),
                 FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        pagerAdapter.addFragment(new GalleryFragment(), "Gallery");
         pagerAdapter.addFragment(new PhotoFragment(), "Photo");
+        pagerAdapter.addFragment(new GalleryFragment(), "Gallery");
 
         postFragmentsViewPager.setAdapter(pagerAdapter);
         postTabLayout.setupWithViewPager(postFragmentsViewPager);

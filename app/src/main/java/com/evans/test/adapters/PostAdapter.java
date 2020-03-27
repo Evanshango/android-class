@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,8 @@ import com.evans.test.models.LikePost;
 import com.evans.test.models.Post;
 
 import java.util.List;
+
+import io.opencensus.internal.StringUtils;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
@@ -48,9 +51,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
     class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView postImage, favBorder;
-        TextView likes, comments, caption, savePost;
+        ImageView postImage, favBorder, savePost;
+        TextView likes, comments, caption, authorName;
         PostItemListener mPostItemListener;
+        LinearLayout moreImg;
 
         PostHolder(@NonNull View itemView, PostItemListener postItemListener) {
             super(itemView);
@@ -61,17 +65,32 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             caption = itemView.findViewById(R.id.postCaption);
             savePost = itemView.findViewById(R.id.savePost);
             favBorder = itemView.findViewById(R.id.favBorder);
+            moreImg = itemView.findViewById(R.id.moreImg);
+            authorName = itemView.findViewById(R.id.authorName);
 
             likes.setOnClickListener(this);
             comments.setOnClickListener(this);
             caption.setOnClickListener(this);
             savePost.setOnClickListener(this);
+            moreImg.setOnClickListener(this);
+            authorName.setOnClickListener(this);
         }
 
         void bind(Post post) {
-            caption.setText(post.getPostCaption());
-            likes.setText(String.format("%s likes", post.getLikes().size()));
-            comments.setText(String.format("%s comments", post.getComments().size()));
+            String captionTxt = post.getPostCaption();
+            String shortCaption = captionTxt.substring(0, 5);
+            caption.setText(shortCaption);
+
+            if (captionTxt.length() > 50)
+                moreImg.setVisibility(View.VISIBLE);
+            else
+                moreImg.setVisibility(View.GONE);
+
+            moreImg.setOnClickListener(v -> {
+                caption.setText(captionTxt);
+            });
+//            likes.setText(String.format("%s likes", post.getLikes().size()));
+//            comments.setText(String.format("%s comments", post.getComments().size()));
 
             Glide.with(itemView.getContext()).load(post.getPostImage()).into(postImage);
         }

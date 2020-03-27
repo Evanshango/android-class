@@ -7,8 +7,8 @@ public class LikePost {
     public LikePost() {
     }
 
-    public LikePost(String likeId, String postId, String username, String userId) {
-        this.likeId = likeId;
+    public LikePost(String likedId, String postId, String username, String userId) {
+        this.likeId = likedId;
         this.postId = postId;
         this.username = username;
         this.userId = userId;

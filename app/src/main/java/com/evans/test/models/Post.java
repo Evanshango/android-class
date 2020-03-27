@@ -7,24 +7,23 @@ import java.util.List;
 
 public class Post implements Parcelable {
 
-    private String postId, postImage, postCaption, date, time;
+    private String postId, postImage, postCaption, date, time, author;
     private List<LikePost> mLikes;
     private List<Comment> mComments;
-    private User mUser;
 
     public Post() {
     }
 
     public Post(String postId, String postImage, String postCaption, String date, String time,
-                List<LikePost> likes, List<Comment> comments, User user) {
+                String author, List<LikePost> likes, List<Comment> comments) {
         this.postId = postId;
         this.postImage = postImage;
         this.postCaption = postCaption;
         this.date = date;
         this.time = time;
+        this.author = author;
         mLikes = likes;
         mComments = comments;
-        mUser = user;
     }
 
     protected Post(Parcel in) {
@@ -33,7 +32,7 @@ public class Post implements Parcelable {
         postCaption = in.readString();
         date = in.readString();
         time = in.readString();
-        mUser = in.readParcelable(User.class.getClassLoader());
+        author = in.readString();
     }
 
     @Override
@@ -43,7 +42,7 @@ public class Post implements Parcelable {
         dest.writeString(postCaption);
         dest.writeString(date);
         dest.writeString(time);
-        dest.writeParcelable(mUser, flags);
+        dest.writeString(author);
     }
 
     @Override
@@ -103,6 +102,14 @@ public class Post implements Parcelable {
         this.time = time;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     public List<LikePost> getLikes() {
         return mLikes;
     }
@@ -117,13 +124,5 @@ public class Post implements Parcelable {
 
     public void setComments(List<Comment> comments) {
         mComments = comments;
-    }
-
-    public User getUser() {
-        return mUser;
-    }
-
-    public void setUser(User user) {
-        mUser = user;
     }
 }

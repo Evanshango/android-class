@@ -1,18 +1,20 @@
 package com.evans.test;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.evans.test.models.User;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -20,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mEmail, mPassword;
     private Button mLogin;
     private FirebaseAuth mAuth;
+    private TextView regLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,13 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         initViews();
         mLogin.setOnClickListener(v -> onLogin());
+        regLink.setOnClickListener(v-> toRegisterActivity());
+    }
+
+    private void toRegisterActivity() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void onLogin() {
@@ -58,23 +68,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void proceedWithLogin(String email, String password) {
-        Intent toHomePage = new Intent(this, HomeActivity.class);
-//        toHomePage.putExtra("user", user)
-;        startActivity(toHomePage);
-        finish();
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                toHomeActivity();
+            } else {
+                String errMsg = Objects.requireNonNull(task.getException()).getMessage();
+                Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e ->
+                Toast.makeText(this, "Error " + e.getMessage(), Toast.LENGTH_SHORT).show()
+        );
     }
 
     private void initViews() {
         mEmail = findViewById(R.id.loginEmail);
         mPassword = findViewById(R.id.loginPassword);
         mLogin = findViewById(R.id.btnLogin);
+        regLink = findViewById(R.id.regLink);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null){
+        if (user != null) {
             toHomeActivity();
         } else {
             Log.d(TAG, "onStart: User is no logged in");
